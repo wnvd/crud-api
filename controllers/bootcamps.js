@@ -6,6 +6,7 @@
  */
 exports.getBootCamps = (req, res, next) => {
   res.status(200).json({ success: true, msg: "show all bootcamps" });
+  next();
 };
 
 /* @desc Get single bootcamps
@@ -14,6 +15,7 @@ exports.getBootCamps = (req, res, next) => {
  */
 exports.getBootCamp = (req, res, next) => {
   res.status(200).json({ success: true, msg: `get bootcamp ${req.params.id}` });
+  next();
 };
 
 /* @desc Create new bootcamp
@@ -22,6 +24,7 @@ exports.getBootCamp = (req, res, next) => {
  */
 exports.createBootCamp = (req, res, next) => {
   res.status(200).json({ success: true, msg: "Create  new bootcamp" });
+  next();
 };
 
 /* @desc Update new bootcamp
@@ -32,6 +35,7 @@ exports.updateBootCamp = (req, res, next) => {
   res
     .status(200)
     .json({ success: true, msg: `Update bootcamp ${req.params.id}` });
+  next();
 };
 
 /* @desc Delete new bootcamp
@@ -42,4 +46,5 @@ exports.deleteBootCamp = (req, res, next) => {
   res
     .status(200)
     .json({ success: true, msg: `delete bootcamps ${req.params.id}` });
+  next();
 };

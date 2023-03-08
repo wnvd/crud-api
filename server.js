@@ -1,7 +1,6 @@
 const dotenv = require("dotenv");
 const express = require("express");
-const morgan = require("morgan");
-
+const logger = require("morgan");
 // Route files
 const bootcamps = require("./routes/bootcamps");
 // loading env vars
@@ -11,8 +10,10 @@ const app = express();
 // Mount Routers
 app.use("/api/v1/bootcamps", bootcamps);
 const PORT = process.env.PORT || 5000;
-//loggin
-app.use(morgan("tiny"));
+// logger
+if ((process.env.NODE_ENV = "development")) {
+  app.use(logger("dev"));
+}
 
 app.listen(
   PORT,
