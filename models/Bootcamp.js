@@ -9,10 +9,10 @@ const BootcampSchema = new mongoose.Schema({
     maxlength: [50, "Name can not be more than 50 characters"],
   },
   slug: String, // its a url friendly version of name.
-  desc: {
+  description: {
     type: String,
-    required: [true, "Please add a name"],
-    maxlength: [50, "Description can not be more than 50 characters"],
+    required: [true, "Please add a description"],
+    maxlength: [250, "Description can not be more than 50 characters"],
   },
   website: {
     type: String,
@@ -41,11 +41,11 @@ const BootcampSchema = new mongoose.Schema({
     type: {
       type: String,
       enum: ["Point"],
-      required: true,
+      required: false,
     },
     coordiantes: {
       type: [Number],
-      required: true,
+      required: false,
       index: "2dsphere",
     },
     formattedAddress: String,
@@ -82,11 +82,11 @@ const BootcampSchema = new mongoose.Schema({
   },
   jobAssistance: {
     type: Boolean,
-    default: flase,
+    default: false,
   },
   jobGuarantee: {
     type: Boolean,
-    default: flase,
+    default: false,
   },
   acceptGi: {
     type: Boolean,
