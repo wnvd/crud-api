@@ -8,9 +8,9 @@ const {
 } = require("../controllers/bootcamps");
 const router = express.Router();
 
-//
+// '/'
 router.route("/").get(getBootcamps).post(createBootcamp);
-// :id
+// ':id'
 router
   .route("/:id")
   .get(getBootcamp)
