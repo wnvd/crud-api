@@ -1,4 +1,4 @@
-const { findByIdAndDelete } = require("../models/Bootcamp");
+const ErrorResponse = require("../utlis/errorResponse");
 const Bootcamp = require("../models/Bootcamp");
 // here we are going to cerate different mehtods
 // that are going to used by different routers.
@@ -26,13 +26,20 @@ exports.getBootcamp = async (req, res, next) => {
   try {
     const bootcamp = await Bootcamp.findById(req.params.id);
     // guard clause for if bootcamp = null (which is falsy).
-    if (!bootcamp) res.status(400).json({ success: false });
+    console.log(bootcamp);
+    if (!bootcamp) {
+      return next(
+        new ErrorResponse(`Bootcamp not found with id: ${req.params.id} `, 404),
+      );
+    }
 
     res.status(200).json({ success: true, data: bootcamp });
   } catch (e) {
-    res.status(400).json({ success: false });
+    // res.status(400).json({ success: false });
+    next(
+      new ErrorResponse(`Bootcamp not found with id: ${req.params.id} `, 404),
+    );
   }
-  next();
 };
 
 /* @desc Create new bootcamp
