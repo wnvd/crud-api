@@ -54,7 +54,7 @@ exports.createBootcamp = asyncHandler(async (req, res, next) => {
     success: true,
     data: bootcamp,
   });
-  next(e);
+  next();
 });
 
 /* @desc Update new bootcamp
