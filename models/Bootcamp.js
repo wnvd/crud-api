@@ -45,7 +45,7 @@ const BootcampSchema = new mongoose.Schema({
       enum: ["Point"],
       required: false,
     },
-    coordiantes: {
+    coordinates: {
       type: [Number],
       required: false,
       index: "2dsphere",
@@ -111,7 +111,7 @@ BootcampSchema.pre("save", async function (next) {
   const loc = await geocoder.geocode(this.address);
   this.location = {
     type: "Point",
-    coordiantes: [loc[0].latitude, loc[0].longitude],
+    coordinates: [loc[0].latitude, loc[0].longitude],
     formattedAddress: loc[0].formattedAddress,
     street: loc[0].streetName,
     city: loc[0].city,

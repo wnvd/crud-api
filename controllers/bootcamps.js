@@ -1,5 +1,6 @@
 const ErrorResponse = require("../utlis/errorResponse");
 const asyncHandler = require("../middleware/async");
+const geocoder = require("../utlis/geocoder");
 const Bootcamp = require("../models/Bootcamp");
 // here we are going to cerate different mehtods
 // that are going to used by different routers.
@@ -87,4 +88,35 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
   res
     .status(200)
     .json({ success: true, data: `${bootcamp.name} has been deleted` });
+});
+
+/*
+ * @desc Get bootcamps within radius
+ * @route GET /api/v1/bootcamps/radius/:zipcode/:distance
+ * @access Private
+ */
+exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
+  const { zipcode, distance } = req.params;
+
+  // Get lat/long from geocoder
+  const loc = await geocoder.geocode(zipcode);
+  const lat = loc[0].latitude;
+  const lng = loc[0].longitude;
+
+  // Cal radius using radians
+  // divide dist by radius of earth
+  // earth radious = 3,963 mi , 6,378 kms
+  const radius = distance / 6378;
+  const bootcamps = await Bootcamp.find({
+    location: {
+      $geoWithin: {
+        $centerSphere: [[lat, lng], radius],
+      },
+    },
+  });
+  res.status(200).json({
+    success: true,
+    count: bootcamps.length,
+    data: bootcamps,
+  });
 });
