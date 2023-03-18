@@ -52,6 +52,7 @@ const BootcampSchema = new mongoose.Schema({
     },
     formattedAddress: String,
     street: String,
+    city: String,
     state: String,
     zipcode: String,
     country: String,
@@ -90,6 +91,7 @@ const BootcampSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  averageCost: Number,
   acceptGi: {
     type: Boolean,
     default: false,
@@ -112,10 +114,10 @@ BootcampSchema.pre("save", async function (next) {
   this.location = {
     type: "Point",
     coordinates: [loc[0].latitude, loc[0].longitude],
-    formattedAddress: loc[0].formattedAddress,
+    // formattedAddress: loc[0].formattedAddress,
     street: loc[0].streetName,
     city: loc[0].city,
-    state: loc[0].stateCode,
+    state: loc[0].state,
     zipcode: loc[0].zipcode,
     country: loc[0].countryCode,
   };

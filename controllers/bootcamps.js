@@ -2,6 +2,7 @@ const ErrorResponse = require("../utlis/errorResponse");
 const asyncHandler = require("../middleware/async");
 const geocoder = require("../utlis/geocoder");
 const Bootcamp = require("../models/Bootcamp");
+const { json } = require("body-parser");
 // here we are going to cerate different mehtods
 // that are going to used by different routers.
 /* @desc Get all bootcamps
@@ -21,7 +22,15 @@ const Bootcamp = require("../models/Bootcamp");
 //   next();
 // };
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
-  const bootcamps = await Bootcamp.find();
+  let query;
+  let queryStr = JSON.stringify(req.query);
+  // here we are using regex to replace gt/gte/lt.. to $gt/$gte/$lt
+  queryStr = queryStr.replace(
+    /\b(gt|gte|lt|lte|in)\b/g,
+    (match) => `$${match}`,
+  );
+  query = Bootcamp.find(JSON.parse(queryStr));
+  const bootcamps = await query;
 
   res
     .status(200)
