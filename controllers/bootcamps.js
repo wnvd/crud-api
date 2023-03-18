@@ -23,13 +23,36 @@ const { json } = require("body-parser");
 // };
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
   let query;
-  let queryStr = JSON.stringify(req.query);
+  // copy req.Query
+  const reqQuery = { ...req.query };
+  // fields to exclude
+  const removeFields = ["select", "sort"];
+
+  // loop and removefields and delete them from reqQuery
+  removeFields.forEach((param) => delete reqQuery[param]);
+  // create query string
+  let queryStr = JSON.stringify(reqQuery);
   // here we are using regex to replace gt/gte/lt.. to $gt/$gte/$lt
   queryStr = queryStr.replace(
     /\b(gt|gte|lt|lte|in)\b/g,
     (match) => `$${match}`,
   );
   query = Bootcamp.find(JSON.parse(queryStr));
+
+  //Select fields
+  if (req.query.select) {
+    const fields = req.query.select.split(",").join(" ");
+    query = query.select(fields);
+  }
+
+  // Sort
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(",").join(" ");
+    query = query.sort(sortBy);
+  } else {
+    query = query.sort("-createdAt");
+  }
+  // exec query
   const bootcamps = await query;
 
   res
@@ -44,7 +67,6 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
 exports.getBootcamp = asyncHandler(async (req, res, next) => {
   const bootcamp = await Bootcamp.findById(req.params.id);
   // guard clause for if bootcamp = null (which is falsy).
-  console.log(bootcamp);
   if (!bootcamp) {
     return next(
       new ErrorResponse(`Bootcamp not found with id: ${req.params.id} `, 404),
