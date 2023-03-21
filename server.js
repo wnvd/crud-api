@@ -10,12 +10,14 @@ dotenv.config({ path: "./config/config.env" });
 connectDB();
 // Route files
 const bootcamps = require("./routes/bootcamps");
+const courses = require("./routes/courses");
 
 const app = express();
 // Body parser
 app.use(express.json());
 // Mount Routers
 app.use("/api/v1/bootcamps", bootcamps);
+app.use("/api/v1/courses", courses);
 
 // Error Handler
 app.use(errorHandler);
