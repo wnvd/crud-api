@@ -1,7 +1,9 @@
+const path = require("path");
 const dotenv = require("dotenv");
 const express = require("express");
 const logger = require("morgan");
 const colors = require("colors");
+const fileUpload = require("express-fileupload");
 const errorHandler = require("./middleware/errorHandler");
 const connectDB = require("./config/db");
 // loading env vars
@@ -15,6 +17,13 @@ const courses = require("./routes/courses");
 const app = express();
 // Body parser
 app.use(express.json());
+
+// File Uploading
+app.use(fileUpload());
+
+// set static folder
+app.use(express.static(path.join(__dirname, "public")));
+
 // Mount Routers
 app.use("/api/v1/bootcamps", bootcamps);
 app.use("/api/v1/courses", courses);
