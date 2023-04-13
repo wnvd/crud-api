@@ -14,10 +14,7 @@ const advancedResults = (model, populate) => async (req, res, next) => {
 		/\b(gt|gte|lt|lte|in)\b/g,
 		(match) => `$${match}`,
 	);
-	query = model.find(JSON.parse(queryStr)).populate({
-		path: "courses",
-		select: "name description",
-	});
+	query = model.find(JSON.parse(queryStr));
 
 	//Select fields
 	if (req.query.select) {
