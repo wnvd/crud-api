@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -10,7 +11,7 @@ const UserSchema = new mongoose.Schema({
         required: [true, 'Please add an email'],
         unique: true,
         match: [
-            /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+            /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
         "Please enter a valid email address.",
         ] 
     },
@@ -34,4 +35,9 @@ const UserSchema = new mongoose.Schema({
 
 });
 
+// encrypt password using bcrypt
+UserSchema.pre('save', async function(next) {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+});
 module.exports = mongoose.model('User', UserSchema);
