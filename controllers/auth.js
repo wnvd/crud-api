@@ -16,5 +16,10 @@ exports.register = asyncHandler(async (req, res, next) => {
 		role,
 	});
 	// we are using middleware to hash password
-	res.status(200).json({ success: true });
+
+	// create token
+	// small u because we are calling it on method
+	const token = user.getSignJwtToken();
+
+	res.status(200).json({ success: true, token:token });
 });
