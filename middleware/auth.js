@@ -12,7 +12,6 @@ exports.protect = asyncHandler(async (req, res, next) => {
 		req.headers.authorization.startsWith("Bearer")
 	) {
 		token = req.headers.authorization.split(" ")[1];
-		console.log(token);
 	}
 	// else if(req.cookies.token) {
 	//      token = req.cookies.token;
@@ -31,3 +30,16 @@ exports.protect = asyncHandler(async (req, res, next) => {
 		return next(new ErrorResponse("Not Authorized to access this route."));
 	}
 });
+
+// Grant acces to specific roles
+exports.authorize =
+	(...roles) =>
+	(req, res, next) => {
+		if (!roles.includes(req.user.role)) {
+			return next(
+				new ErrorResponse(`User role "${req.user.role}" not authorized`),
+				403,
+			);
+		}
+		return next();
+	};
