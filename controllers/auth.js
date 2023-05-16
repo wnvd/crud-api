@@ -1,5 +1,6 @@
 const ErrorResponse = require("../utlis/errorResponse");
 const asyncHandler = require("../middleware/async");
+const sendEmail = require("../utlis/sendEmail.js");
 const User = require("../models/User");
 
 // @desc Register User
@@ -18,6 +19,7 @@ exports.register = asyncHandler(async (req, res, next) => {
 	// we are using middleware to hash password
 
 	sendTokenResponse(user, 200, res);
+    next();
 });
 
 // @desc Login User
@@ -60,8 +62,6 @@ exports.getMe = asyncHandler(async (req, res, next) => {
         );
     }
 
-    // Get reset token
-    const token = user.getResetPasswordToken();
 	res.status(200).json({
 		success: true,
 		data: user
@@ -74,7 +74,7 @@ exports.getMe = asyncHandler(async (req, res, next) => {
 // @access Public
 exports.forgotPassword = asyncHandler(async (req, res, next) => {
 	const user = await User.findOne({ email: req.body.email });
-    
+
     if(!user) {
         return next( new ErrorResponse("There is no user with that email", 404));
     }
@@ -83,11 +83,32 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
     const resetToken = user.getResetPasswordToken();
     
     await user.save({ validateBeforeSave: false});
-    console.log(resetToken);
+    // create  reset url
+    const resetURL = `${req.protocol}://${req.get('host')}/api/v1/resetpassword/${resetToken}`;
+
+    const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetURL}`;
     
+    try{
+        
+        await sendEmail({
+            email: user.email,
+            subject: 'Password Reset',
+            message
+        });
+
+    }catch(err){
+        console.log(err);
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+
+        await user.save({validateBeforeSave: false});
+
+        return next( 
+            new ErrorResponse('Email could not be sent'), 500);
+    }
 	res.status(200).json({
 		success: true,
-		data: user
+		data: 'Email sent.'
 	});
 
 });
