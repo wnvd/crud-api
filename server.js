@@ -1,10 +1,11 @@
 const path = require("path");
 const dotenv = require("dotenv");
 const express = require("express");
+const helmet = require("helmet");
 const logger = require("morgan");
-const colors = require("colors");
 const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
+const xss = require("xss-clean");
 const mongoSanitize = require("express-mongo-sanitize");
 const errorHandler = require("./middleware/errorHandler");
 const connectDB = require("./config/db");
@@ -20,6 +21,8 @@ const auth = require("./routes/auth");
 const reviews = require("./routes/reviews");
 
 const app = express();
+// set security headers 
+app.use(helmet());
 // Body parser
 app.use(express.json());
 // cookie parser
@@ -29,6 +32,8 @@ app.use(fileUpload());
 // Sanitize data 
 app.use(mongoSanitize());
 
+// Prevent XSS attacks
+app.use(xss());
 // set static folder
 app.use(express.static(path.join(__dirname, "public")));
 
