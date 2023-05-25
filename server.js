@@ -7,6 +7,9 @@ const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
 const xss = require("xss-clean");
 const mongoSanitize = require("express-mongo-sanitize");
+const rateLimit = require("express-rate-limit");
+const hpp = require("hpp");
+const cors = require("cors");
 const errorHandler = require("./middleware/errorHandler");
 const connectDB = require("./config/db");
 // loading env vars
@@ -34,6 +37,15 @@ app.use(mongoSanitize());
 
 // Prevent XSS attacks
 app.use(xss());
+// Rate limiting
+const limiter = rateLimit({
+    windowMs: 10 * 60 * 1000, // 10 mins
+    max: 100
+});
+// Prevent http params pollution
+app.use(hpp());
+// enable cors
+app.use(cors());
 // set static folder
 app.use(express.static(path.join(__dirname, "public")));
 
