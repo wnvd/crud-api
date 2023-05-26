@@ -1,11 +1,12 @@
 const path = require("path");
 const dotenv = require("dotenv");
+const colors = require("colors");
 const express = require("express");
 const helmet = require("helmet");
 const logger = require("morgan");
 const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
-const xss = require("xss");
+const xss = require("xss-clean");
 const mongoSanitize = require("express-mongo-sanitize");
 const rateLimit = require("express-rate-limit");
 const hpp = require("hpp");
@@ -25,7 +26,9 @@ const reviews = require("./routes/reviews");
 
 const app = express();
 // set security headers 
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: false,
+}));
 // Body parser
 app.use(express.json());
 // cookie parser
@@ -42,7 +45,7 @@ const limiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 mins
     max: 100
 });
-app.use(limiter());
+app.use('/api', limiter);
 // Prevent http params pollution
 app.use(hpp());
 // enable cors
